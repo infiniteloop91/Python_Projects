@@ -128,8 +128,8 @@ while True:
 
          # Check if the player has won
          foundAllLetters = True
-         for i in range(len(secretWord)):
-             if secretWord[i] not in correctLetters:
+         for leter in secretWord:
+             if leter not in correctLetters:
                  foundAllLetters = False
                  break
          if foundAllLetters:
