@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May  8 15:43:35 2019
+
+@author: ericlyons
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May  8 13:16:41 2019
+
+@author: ericlyons
+"""
+import urllib.request
+import urllib.parse
+import json
+import pandas as pd
+import time
+
+
+url = "https://api.nytimes.com/svc/search/v2/articlesearch.json?"
+
+
+page_list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+
+urls = []
+abstracts = []
+dates = []  
+titles = []
+
+df = pd.DataFrame()
+for i in range(len(page_list)):
+    try:
+        pages = page_list[i]
+        print(page_list[i])
+
+        apikey = 'XXXXXXX'
+        params = {"q": "hurricane+maria",       "api-key": apikey, "source": "The New York Times",
+          "fq":"pub_year:[2008 TO 2013]"}
+        query_string = urllib.parse.urlencode(params)      
+        url_new = url + query_string + "page" + "=" + str(pages)  
+        #print(url_new)
+        with urllib.request.urlopen(url_new) as response:        
+            response_text = json.load(response)
+            time.sleep(10)
+            print(response_text['response']['docs'][1]['web_url'])
+            
+      
+        
+        number = 0  
+        while number <= 1000: 
+            urls.append(response_text['response']['docs'][number]['web_url'])
+            abstracts.append(response_text['response']['docs'][number]['abstract'])
+            dates.append(response_text['response']['docs'][number]['pub_date'])
+            titles.append(response_text['response']['docs'][number]['headline']['main'])
+            number = number + 1
+            
+
+
+   
+        
+
+
+#print(response_text) 
+#error handling 
+    except KeyError:
+         #print('Key error \n')
+         pass
+    except IndexError:
+        #print('Index error \n')
+        pass
+
+
+
+
+
+
+
+     
+            
+            
+df['urls'] = urls
+df['abstracts'] = abstracts
+df['date'] = dates 
+df['title'] = titles
+
+#export_csv = df.to_csv ('file path', index = None, header=True) 
